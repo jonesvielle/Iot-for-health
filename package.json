@@ -1,0 +1,15 @@
+{
+  "name": "jesse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "blueimp-file-upload": "^10.31.0",
+    "cloudinary-jquery-file-upload": "^2.11.4"
+  }
+}

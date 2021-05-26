@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Train+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css" />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css"
+    />
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <title>Smart Clinic</title>
+  </head>
+  <body class="">
+    <nav
+      class="navbar navbar-expand-lg navbar-toggle-sm navbar-light"
+      style="background-color: rgba(10, 29, 66, 0.829)"
+    >
+      <div class="container-fluid">
+        <a
+          onclick="handleHome()"
+          class="navbar-brand text-light"
+          style="
+            margin-left: 3%;
+            font-family: 'Train One', cursive;
+            cursor: pointer;
+          "
+        >
+          <i class="fa fa-heartbeat h1 text-light"></i>SMART CLINIC</a
+        >
+        <button
+          class="navbar-toggler bg-light"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse ml-auto py-1 px-5"
+          id="navbarSupportedContent"
+        >
+          <ul
+            class="navbar-nav mb-2 mb-lg-0 text-white ml-auto text-center"
+            style="margin-left: auto"
+          >
+            <div class="btn btn-outline-primary m-1">Sign Out</div>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <div class="row d-flex justify-content-center">
+        <!-- <div class="col-md-9 col-xs-8 shadow-lg">
+          <div class="row d-flex m-3 justify-content-center">
+            <b class="p-3 text-primary">Heart rate</b>
+            <div class="ct-chart ct-perfect-fourth"></div>
+          </div>
+        </div> -->
+        <input type="file" id="imgupload" style="display: none" />
+
+        <div
+          onclick="selectImage()"
+          class="d-flex col-md-6 m-3 col-xs-8 shadow-lg p-5 container-fluid"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            cursor: pointer;
+          "
+        >
+          <img
+            src="./images/placeholder.png"
+            class="img-fluid"
+            id="img-placeholder"
+          />
+        </div>
+        <div
+          id="results"
+          class="col-md-12 m-3 col-xs-8 shadow-lg p-5"
+          style="display: flex; align-items: center; justify-content: center"
+        >
+          <p class="text-secondary">Test result will appear here</p>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+
+    <script>
+      const detectCovid = (imageUrl) => {
+        var settings = {
+          url: "https://southcentralus.api.cognitive.microsoft.com/customvision/v3.0/Prediction/689d053d-6d91-4a9f-92df-11ab7cf50cd7/classify/iterations/Iteration7/url",
+          method: "POST",
+          timeout: 0,
+          headers: {
+            "Prediction-Key": "895b417fa39b41368644572e9c7a9159",
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            Url: imageUrl,
+          }),
+        };
+
+        $.ajax(settings).done(function (response) {
+          // console.log(response);
+          return response;
+        });
+      };
+      const selectImage = async () => {
+        const client = filestack.init("An87VnYrTRgaOOyAkkqXfz");
+
+        const res = await client
+          .picker({
+            onFileUploadFinished: async (e) => {
+              // console.log("res", e.url);
+              $("#img-placeholder").attr("src", e.url);
+              var settings = {
+                url: "https://southcentralus.api.cognitive.microsoft.com/customvision/v3.0/Prediction/689d053d-6d91-4a9f-92df-11ab7cf50cd7/classify/iterations/Iteration7/url",
+                method: "POST",
+                timeout: 0,
+                headers: {
+                  "Prediction-Key": "895b417fa39b41368644572e9c7a9159",
+                  "Content-Type": "application/json",
+                },
+                data: JSON.stringify({
+                  Url: e.url,
+                }),
+              };
+
+              $.ajax(settings).done(function (response) {
+                // console.log(response);
+                // return response;
+                const testResults = response.predictions;
+                const mostLikely = Math.max.apply(
+                  Math,
+                  testResults.map(function (i) {
+                    return i.probability;
+                  })
+                );
+                const resultObject = testResults.find(function (o) {
+                  return o.probability == mostLikely;
+                });
+                console.log("r", resultObject);
+                $("#results").html(
+                  '<p>Result: <b class="text-danger">' +
+                    resultObject.tagName +
+                    '</b> with probability of <b class="text-info">' +
+                    resultObject.probability +
+                    "</b></p>"
+                );
+              });
+            },
+          })
+          .open();
+        // console.log(, res);
+      };
+
+      const handleHome = () => {
+        // alert("heart");
+        if (deviceId !== undefined) {
+          window.location.href =
+            "http://127.0.0.1:5501/patient_dashboard.html?device_id=" +
+            deviceId;
+        }
+      };
+      // let heart_beat_data
+      function getUrlVars() {
+        var vars = [],
+          hash;
+        var hashes = window.location.href
+          .slice(window.location.href.indexOf("?") + 1)
+          .split("&");
+        for (var i = 0; i < hashes.length; i++) {
+          hash = hashes[i].split("=");
+          vars.push(hash[0]);
+          vars[hash[0]] = hash[1];
+        }
+        return vars;
+      }
+      const deviceId = getUrlVars()["device_id"];
+      console.log(deviceId);
+    </script>
+  </body>
+</html>
